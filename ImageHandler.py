@@ -1,7 +1,6 @@
 import cv2 as cv
 import numpy as np
 import os
-import pickle
 
 # ImageHandler class responsible for reading the images from the file and mange the image order to be displayed.
 class ImageHandler:
@@ -51,21 +50,13 @@ class ImageHandler:
     # The get_first_img function returns the first image in the imgs list or the last image that was saved in the
     # pickle file.
     # return: an image-image name pair.
-    def get_first_img(self):
-        if os.path.exists("results.pickle"):  # checks if their is a pickle file.
-            if os.path.getsize("results.pickle") > 0:  # checks that the pickle file is not empty.
-                unpickled = []
-                with open("results.pickle", 'rb') as f:
-                    while True:
-                        try:
-                            unpickled.append(pickle.load(f))  # reading from the pickle file.
-                        except EOFError:
-                            f.close()
-                            break
-                for i, img in enumerate(self.imgs):
-                    if img[1] == list(unpickled[-1].keys())[-1]:  # finding the last image to be saved.
-                        self.idx = i
-                        return img
+    def get_first_img(self, DH):
+        if DH.pickle_to_data():  # creating a dict from the pickle file if exist.
+            data = DH.get_data()
+            for i, img in enumerate(self.imgs):
+                if img[1] == list(data.keys())[-1]:  # finding the last image to be saved.
+                    self.idx = i
+                    return img
         return self.imgs[0]
 
     # The get_idx function returns the idx.
